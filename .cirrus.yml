@@ -124,8 +124,6 @@ task:
         - chmod u+x run_electrum
         - sleep 10s
         - python3 -m unittest electrum/tests/regtest.py
-      depends_on:
-        - "build: AppImage"
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
@@ -133,6 +131,7 @@ task:
     VERSION: "$(git describe --tags --always | cut -c 1-9)"
   depends_on:
     - "linter: Flake8 Mandatory"
+    - "build: AppImage"
 
 task:
   container:
