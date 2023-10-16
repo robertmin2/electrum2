@@ -119,7 +119,7 @@ task:
         Binaries: 'AppImage'
       regtest_script:
         - rm run_electrum
-       # - VERSION="$(git describe --tags --always | cut -c 1-9)" 
+        - VERSION="$(git describe --tags --always | cut -c 1-9)" #Passing it as an env variable wasn't working -> "VERSION: "$(git describe --tags --always | cut -c 1-9)""
         - curl -o run_electrum https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20AppImage/binaries/dist/electrum-$VERSION-x86_64.AppImage
         - chmod u+x run_electrum
         - sleep 10s
@@ -128,7 +128,6 @@ task:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
     ALLOW_ROOT: 1
-    VERSION: "$(git describe --tags --always | cut -c 1-9)"
   depends_on:
     - "linter: Flake8 Mandatory"
     - "build: AppImage"
