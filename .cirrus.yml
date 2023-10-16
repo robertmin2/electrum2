@@ -117,11 +117,10 @@ task:
         - python3 -m unittest electrum/tests/regtest.py
     - env:
         Binaries: 'AppImage'
-        Version: "$(git describe --tags --always | cut -c 1-7)"
       regtest_script:
         - rm run_electrum_nmc
-       # - Version="$(git describe --tags --always | cut -c 1-7)"
-        - curl -o run_electrum_nmc https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/AppImage%20build/binaries/dist/electrum-nmc-$Version-x86_64.AppImage
+       # - VERSION="$(git describe --tags --always | cut -c 1-7)"
+        - curl -o run_electrum_nmc https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/AppImage%20build/binaries/dist/electrum-nmc-$VERSION-x86_64.AppImage
         - chmod u+x run_electrum_nmc
         - sleep 10s
         - python3 -m unittest electrum_nmc/electrum/tests/regtest.py
@@ -131,6 +130,7 @@ task:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
     ALLOW_ROOT: 1
+    VERSION: "$(git describe --tags --always | cut -c 1-7)"
   depends_on:
     - "linter: Flake8 Mandatory"
 
