@@ -114,8 +114,8 @@ task:
         - sleep 10s
         - Xvfb :99 -screen 0 1024x768x24 &
         - export DISPLAY=:99
-        #- sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
-        - sudo python3 -m unittest electrum/tests/regtest.py
+        - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
+        - sudo python3 -m unittest electrum/tests/regtest.py                                # Might be becuase of running it with sudo, but it fails if not
       env:
         ELECTRUM_MODE: "gui"
     - name: "Regtest functional tests Daemon"
