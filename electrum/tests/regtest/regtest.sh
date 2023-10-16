@@ -108,7 +108,9 @@ fi
 # start daemons. Bob is started first because he is listening
 if [[ $1 == "start" ]]; then
     agent="./run_electrum --regtest -D /tmp/$2"
-    $agent daemon -d
+    $agent $ELECTRUM_MODE >/dev/null 2>&1 & sleep 5
+    pid=$!
+    echo $pid > "/tmp/$2.pid"
     $agent load_wallet
     sleep 1 # give time to synchronize
 fi
@@ -116,6 +118,21 @@ fi
 if [[ $1 == "stop" ]]; then
     agent="./run_electrum --regtest -D /tmp/$2"
     $agent stop || true
+    pid_file="/tmp/$2.pid"
+     if [ -f "$pid_file" ]; then
+        pid=$(cat "$pid_file")
+
+        # Check if the process with the stored PID exists and is running
+        if ps -p $pid > /dev/null; then
+            echo "Stopping PID: $pid"
+            kill $pid
+        else
+            echo "Process with PID $pid not found or already stopped."
+        fi
+
+        # Remove the PID file
+        rm -f "$pid_file"
+    fi
 fi
 
 
