@@ -117,7 +117,7 @@ task:
         - ./contrib/make_qt_forms
         - Xvfb :99 -screen 0 1024x768x24 &
         - export DISPLAY=:99
-        - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum_nmc/electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace
+      #  - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum_nmc/electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace
         - sudo python3 -m unittest electrum_nmc/electrum/tests/regtest.py
       env:
         ELECTRUM_MODE: "gui"
