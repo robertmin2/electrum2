@@ -95,7 +95,7 @@ task:
     populate_script: mkdir -p /tmp/bitcoind
   install_script:
     - apt-get update
-    - apt-get -y install libsecp256k1-dev curl jq bc
+    - apt-get -y install libsecp256k1-dev curl jq bc libfuse2
     - pip3 install .[tests]
     # install e-x some commits after 1.16.0 tag
     - pip3 install git+https://github.com/spesmilo/electrumx.git@4e66804dc0d668cd6bd4602b547e2f5b2e227e97
@@ -109,9 +109,24 @@ task:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
     - electrum/tests/regtest/run_electrumx.sh
-  regtest_script:
-    - sleep 10s
-    - python3 -m unittest electrum/tests/regtest.py
+  matrix:
+    - env:
+        Binaries: 'Tarball'
+      regtest_script:
+        - sleep 10s
+        - python3 -m unittest electrum/tests/regtest.py
+    - env:
+        Binaries: 'AppImage'
+        Version: "$(git describe --tags --always | cut -c 1-7)"
+      regtest_script:
+        - rm run_electrum_nmc
+       # - Version="$(git describe --tags --always | cut -c 1-7)"
+        - curl -o run_electrum_nmc https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/AppImage%20build/binaries/dist/electrum-nmc-$Version-x86_64.AppImage
+        - chmod u+x run_electrum_nmc
+        - sleep 10s
+        - python3 -m unittest electrum_nmc/electrum/tests/regtest.py
+      depends_on:
+        - "build: AppImage"
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
