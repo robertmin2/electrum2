@@ -84,8 +84,8 @@ task:
     image_project: cirrus-images
     image: family/docker-builder
     platform: linux
-    cpu: 1
-    memory: 1G
+    cpu: 2
+    memory: 2G
   pip_cache:
     folder: ~/.cache/pip
     fingerprint_script: echo Regtest && echo docker_builder && cat $ELECTRUM_REQUIREMENTS
