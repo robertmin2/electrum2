@@ -245,7 +245,6 @@ task:
   bitcoind_service_background_script:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
-    - cp -p ~/.Namecoin/namecoin.conf "/Users/admin/Library/Application Support/Namecoin/"
     - export PATH="/Users/admin/Library/Python/3.9/bin:$PATH"
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
