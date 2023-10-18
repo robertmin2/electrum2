@@ -208,6 +208,56 @@ task:
   depends_on:
     - "unittests: Tox Python 3.8"
 
+
+task:
+  name: "MacOS build"
+  macos_instance:
+    image: macos-monterey-xcode
+  pip_cache:
+    folder: ~/.cache/pip
+    fingerprint_script: echo Regtest && echo docker_builder && cat $ELECTRUM_REQUIREMENTS
+  bitcoind_cache:
+    folder: /tmp/bitcoind
+    populate_script: mkdir -p /tmp/bitcoind
+  install_electrumx_script:
+    - brew install leveldb
+    - export LIBRARY_PATH="$LIBRARY_PATH:$(brew --prefix)/lib"
+    - export CPATH="$CPATH:$(brew --prefix)/include"
+    - CFLAGS="-I/opt/homebrew/include/ -L/opt/homebrew/lib/ -fno-rtti" pip3 install --force-reinstall --global-option="build_ext" plyvel --no-cache-dir
+    - pip3 install git+https://github.com/spesmilo/electrumx.git@4e66804dc0d668cd6bd4602b547e2f5b2e227e97
+    - sed -i '' 's/return value/return 200/g' /Users/$USER/Library/Python/3.9/lib/python/site-packages/electrumx/server/env.py
+  install_script:
+    - Version="${CIRRUS_BRANCH:7}"
+    - curl -o Electrum.tar.gz https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20tarball/binaries/dist/Electrum-4.4.6.tar.gz
+    - tar -xzf Electrum.tar.gz
+    - mkdir -p "/Users/admin/Library/Application Support/Namecoin"
+    - cp -a electrum/tests Electrum*/electrum/
+    - pip3 install .[tests]
+    # install e-x some commits after 1.16.0 tag
+    - brew install autoconf automake libtool coreutils jq screen
+    - Electrum*/contrib/make_libsecp256k1.sh
+    - "BITCOIND_VERSION=$(curl https://bitcoincore.org/en/download/ | grep -E -i --only-matching 'Latest version: [0-9\\.]+' | grep -E --only-matching '[0-9\\.]+')"
+    - BITCOIND_FILENAME=bitcoin-$BITCOIND_VERSION-x86_64-linux-gnu.tar.gz
+    - BITCOIND_PATH=/tmp/bitcoind/$BITCOIND_FILENAME
+    - BITCOIND_URL=https://bitcoincore.org/bin/bitcoin-core-$BITCOIND_VERSION/$BITCOIND_FILENAME
+    - tar -xaf $BITCOIND_PATH || (rm -f /tmp/bitcoind/* && curl --output $BITCOIND_PATH $BITCOIND_URL && tar -xaf $BITCOIND_PATH)
+    - sudo cp -a bitcoin-$BITCOIND_VERSION/* /usr/local
+  bitcoind_service_background_script:
+    - electrum/tests/regtest/run_bitcoind.sh
+  electrumx_service_background_script:
+    - cp -p ~/.Namecoin/namecoin.conf "/Users/admin/Library/Application Support/Namecoin/"
+    - export PATH="/Users/admin/Library/Python/3.9/bin:$PATH"
+    - electrum/tests/regtest/run_electrumx.sh
+  regtest_script:
+    - cd Electrum*/
+    - sleep 10s
+    - python3 -m unittest electrum/tests/regtest.py
+  env:
+    ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
+    # ElectrumX exits with an error without this:
+    ALLOW_ROOT: 1
+  depends_on:
+    - "build: tarball"
 ## mac build disabled, as Cirrus CI no longer supports Intel-based mac builds
 #task:
 #  name: "build: macOS"
