@@ -250,7 +250,7 @@ task:
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
     - cd Electrum*/
-    - sleep 10s
+    - sleep 10
     - python3 -m unittest electrum/tests/regtest.py
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
