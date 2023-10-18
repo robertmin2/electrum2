@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 export HOME=~
 set -eux pipefail
-mkdir -p ~/.bitcoin
-cat > ~/.bitcoin/bitcoin.conf <<EOF
+mkdir -p "/Users/admin/Library/Application Support/Bitcoin"
+cat > "/Users/admin/Library/Application Support/Bitcoin/bitcoin.conf" <<EOF
 regtest=1
 txindex=1
 printtoconsole=1
