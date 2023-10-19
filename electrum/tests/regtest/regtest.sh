@@ -108,7 +108,7 @@ fi
 # start daemons. Bob is started first because he is listening
 if [[ $1 == "start" ]]; then
     agent="./run_electrum --regtest -D /tmp/$2"
-    $agent $ELECTRUM_MODE >/dev/null 2>&1 & sleep 5
+    $agent $ELECTRUM_MODE --proxy none --server localhost:51001:t >/dev/null 2>&1 & sleep 5
     pid=$!
     echo $pid > "/tmp/$2.pid"
     $agent load_wallet
