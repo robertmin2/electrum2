@@ -208,7 +208,14 @@ task:
   depends_on:
     - "unittests: Tox Python 3.8"
 
-
+task:
+  name: "MacOS build-test"
+  macos_instance:
+    image: macos-monterey-xcode
+  install_electrumx_script:
+    - echo "$ELVERSION"
+  env:
+    ELVERSION: $(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
 task:
   name: "MacOS build"
   macos_instance:
@@ -225,11 +232,11 @@ task:
     - export CPATH="$CPATH:$(brew --prefix)/include"
     - CFLAGS="-I/opt/homebrew/include/ -L/opt/homebrew/lib/ -fno-rtti" pip3 install --force-reinstall --global-option="build_ext" plyvel --no-cache-dir
     - pip3 install git+https://github.com/spesmilo/electrumx.git@4e66804dc0d668cd6bd4602b547e2f5b2e227e97
-    - python_version=$(python3 -c "print('.'.join(map(str, __import__('sys').version_info[:2])))")
-    - sed -i '' 's/return value/return 200/g' /Users/$USER/Library/Python/$python_version/lib/python/site-packages/electrumx/server/env.py
+    - PYTHON_VERSION=$(python3 -c "print('.'.join(map(str, __import__('sys').version_info[:2])))")
+    - sed -i '' 's/return value/return 200/g' /Users/$USER/Library/Python/$PYTHON_VERSION/lib/python/site-packages/electrumx/server/env.py
   install_script:
-    - Version="${CIRRUS_BRANCH:7}"
-    - curl -o Electrum.tar.gz https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20tarball/binaries/dist/Electrum-4.4.6.tar.gz
+    - ELECTRUM_VERSION=$(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
+    - curl -o Electrum.tar.gz https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20tarball/binaries/dist/Electrum-$ELECTRUM_VERSION.tar.gz
     - tar -xzf Electrum.tar.gz
     - cp -a electrum/tests Electrum*/electrum/
     - sed -i '' 's#^mkdir -p ~/.bitcoin#mkdir -p "/Users/$USER/Library/Application Support/Bitcoin"#' electrum/tests/regtest/run_bitcoind.sh
@@ -247,7 +254,8 @@ task:
   bitcoind_service_background_script:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
-    - export PATH="/Users/admin/Library/Python/3.9/bin:$PATH"
+    - ELECTRUM_VERSION=$(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
+    - export PATH="/Users/admin/Library/Python/$ELECTRUM_VERSION/bin:$PATH"
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
     - cd Electrum*/
