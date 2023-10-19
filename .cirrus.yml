@@ -225,7 +225,8 @@ task:
     - export CPATH="$CPATH:$(brew --prefix)/include"
     - CFLAGS="-I/opt/homebrew/include/ -L/opt/homebrew/lib/ -fno-rtti" pip3 install --force-reinstall --global-option="build_ext" plyvel --no-cache-dir
     - pip3 install git+https://github.com/spesmilo/electrumx.git@4e66804dc0d668cd6bd4602b547e2f5b2e227e97
-    - sed -i '' 's/return value/return 200/g' /Users/$USER/Library/Python/3.9/lib/python/site-packages/electrumx/server/env.py
+    - python_version=$(python3 -c "print('.'.join(map(str, __import__('sys').version_info[:2])))")
+    - sed -i '' 's/return value/return 200/g' /Users/$USER/Library/Python/$python_version/lib/python/site-packages/electrumx/server/env.py
   install_script:
     - Version="${CIRRUS_BRANCH:7}"
     - curl -o Electrum.tar.gz https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20tarball/binaries/dist/Electrum-4.4.6.tar.gz
