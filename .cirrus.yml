@@ -237,7 +237,7 @@ task:
     # install e-x some commits after 1.16.0 tag
     - brew install autoconf automake libtool coreutils jq screen
     - Electrum*/contrib/make_libsecp256k1.sh
-    - BITCOIND_VERSION="$(curl https://bitcoincore.org/en/download/ | grep -E -i --only-matching 'Latest version: [0-9\\.]+' | grep -E --only-matching '[0-9\\.]+')"
+    - BITCOIND_VERSION='$(curl https://bitcoincore.org/en/download/ | grep -E -i --only-matching 'Latest version: [0-9\\.]+' | grep -E --only-matching '[0-9\\.]+')'
     - BITCOIND_FILENAME=bitcoin-$BITCOIND_VERSION-arm64-apple-darwin.tar.gz
     - BITCOIND_PATH=/tmp/bitcoind/$BITCOIND_FILENAME
     - BITCOIND_URL=https://bitcoincore.org/bin/bitcoin-core-$BITCOIND_VERSION/$BITCOIND_FILENAME
