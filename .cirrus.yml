@@ -215,7 +215,7 @@ task:
   install_electrumx_script:
     - echo "$ELVERSION"
   env:
-    ELVERSION: $(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
+    ELVERSION: "$(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')"
 task:
   name: "MacOS build"
   macos_instance:
