@@ -246,6 +246,7 @@ task:
   bitcoind_service_background_script:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
+    - PYTHON_VERSION=$(python3 -c "print('.'.join(map(str, __import__('sys').version_info[:2])))")
     - export PATH="/Users/$USER/Library/Python/$PYTHON_VERSION/bin:$PATH"
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
