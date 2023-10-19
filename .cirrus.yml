@@ -246,7 +246,7 @@ task:
   bitcoind_service_background_script:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
-    - export PATH="/Users/admin/Library/Python/$ELECTRUM_VERSION/bin:$PATH"
+    - export PATH="/Users/$USER/Library/Python/$PYTHON_VERSION/bin:$PATH"
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
     - cd Electrum*/
