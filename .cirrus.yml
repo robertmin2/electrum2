@@ -207,15 +207,7 @@ task:
     path: "dist/*"
   depends_on:
     - "unittests: Tox Python 3.8"
-
-task:
-  name: "MacOS build-test"
-  macos_instance:
-    image: macos-monterey-xcode
-  install_electrumx_script:
-    - echo "$ELVERSION"
-  env:
-    ELVERSION: echo $(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
+    
 task:
   name: "MacOS build"
   macos_instance:
@@ -254,7 +246,6 @@ task:
   bitcoind_service_background_script:
     - electrum/tests/regtest/run_bitcoind.sh
   electrumx_service_background_script:
-    - ELECTRUM_VERSION=$(grep -o "ELECTRUM_VERSION = '.*'" electrum/version.py | awk -F"'" '{print $2}')
     - export PATH="/Users/admin/Library/Python/$ELECTRUM_VERSION/bin:$PATH"
     - electrum/tests/regtest/run_electrumx.sh
   regtest_script:
