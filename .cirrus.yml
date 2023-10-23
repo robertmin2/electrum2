@@ -116,7 +116,7 @@ task:
         - "linter: Flake8 Mandatory"
     - env:
         Binaries: 'AppImage'
-      app_image_script:
+      app_image_setup:
         - apt-get -y install libfuse2
         - rm run_electrum
         - VERSION="$(git describe --tags --always | cut -c 1-9)" 
