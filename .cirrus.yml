@@ -132,8 +132,6 @@ task:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
     ALLOW_ROOT: 1
-  depends_on:
-    - "linter: Flake8 Mandatory"
 
 task:
   container:
