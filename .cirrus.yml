@@ -112,6 +112,8 @@ task:
   matrix:
     - env:
         Binaries: 'Tarball'
+      depends_on:
+        - "linter: Flake8 Mandatory"
     - env:
         Binaries: 'AppImage'
       app_image_script:
@@ -122,8 +124,7 @@ task:
         - chmod u+x run_electrum
       depends_on:
         - "build: AppImage"
-  depends_on:
-    - "linter: Flake8 Mandatory"
+        - "linter: Flake8 Mandatory"
   regtest_script:
     - sleep 10s
     - python3 -m unittest electrum/tests/regtest.py
