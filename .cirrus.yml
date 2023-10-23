@@ -80,7 +80,7 @@ task:
   only_if: $CIRRUS_BRANCH == 'master'
 
 task:
-  name: "Regtest functional tests"
+  name: "Regtest functional tests $Binaries"
   compute_engine_instance:
     image_project: cirrus-images
     image: family/docker-builder
@@ -112,25 +112,25 @@ task:
   matrix:
     - env:
         Binaries: 'Tarball'
-      regtest_script:
-        - sleep 10s
-        - python3 -m unittest electrum/tests/regtest.py
     - env:
         Binaries: 'AppImage'
-      regtest_script:
+      app_image_script:
+        - apt-get -y install libfuse2
         - rm run_electrum
-        - VERSION="$(git describe --tags --always | cut -c 1-9)" #Passing it as an env variable wasn't working -> "VERSION: "$(git describe --tags --always | cut -c 1-9)""
+        - VERSION="$(git describe --tags --always | cut -c 1-9)" 
         - curl -o run_electrum https://api.cirrus-ci.com/v1/artifact/build/$CIRRUS_BUILD_ID/build:%20AppImage/binaries/dist/electrum-$VERSION-x86_64.AppImage
         - chmod u+x run_electrum
-        - sleep 10s
-        - python3 -m unittest electrum/tests/regtest.py
+      depends_on:
+        - "build: AppImage"
+  regtest_script:
+    - sleep 10s
+    - python3 -m unittest electrum/tests/regtest.py
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
     ALLOW_ROOT: 1
   depends_on:
     - "linter: Flake8 Mandatory"
-    - "build: AppImage"
 
 task:
   container:
