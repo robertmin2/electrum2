@@ -84,8 +84,8 @@ task:
     image_project: cirrus-images
     image: family/docker-builder
     platform: linux
-    cpu: 2
-    memory: 2G
+    cpu: 1
+    memory: 1G
   pip_cache:
     folder: ~/.cache/pip
     fingerprint_script: echo Regtest && echo docker_builder && cat $ELECTRUM_REQUIREMENTS
@@ -110,7 +110,7 @@ task:
     - electrum/tests/regtest/run_electrumx.sh
   matrix:
     - name: "Regtest functional tests GUI"
-      regtest script:
+      gui_setup:
         - sleep 10s
         - Xvfb :99 -screen 0 1024x768x24 &
         - export DISPLAY=:99
@@ -122,7 +122,7 @@ task:
         ELECTRUM_MODE: "daemon -d"
   regtest_script:
     - sleep 10s
-    - python3 -m unittest electrum/tests/regtest.py
+    - sudo python3 -m unittest electrum/tests/regtest.py
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
