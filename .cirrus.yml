@@ -110,21 +110,21 @@ task:
   electrumx_service_background_script:
     - electrum/tests/regtest/run_electrumx.sh
   matrix:
-    - regtest script:
-        env:
+    - env:
           ELECTRUM_MODE: "gui"
-      regtest script:
+      gui_setup:
         - apt-get -y install xvfb python3-pyqt5
         - Xvfb :99 -screen 0 1024x768x24 &
         - sleep 5s
         - export DISPLAY=:99
         - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
-    - regtest script:
-        env:
-          ELECTRUM_MODE: "daemon"
+    - env:
+        ELECTRUM_MODE: "dameon"
+      daemon_setup:
+        - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="daemon -d"\n/' electrum/tests/regtest/regtest.sh
   regtest_script:
     - sleep 10s
-    - sudo python3 -m unittest electrum/tests/regtest.py
+    - python3 -m unittest electrum/tests/regtest.py
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
