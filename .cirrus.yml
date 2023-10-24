@@ -85,8 +85,8 @@ task:
     image_project: cirrus-images
     image: family/docker-builder
     platform: linux
-    cpu: 2
-    memory: 2G
+    cpu: 1
+    memory: 1G
   pip_cache:
     folder: ~/.cache/pip
     fingerprint_script: echo Regtest && echo docker_builder && cat $ELECTRUM_REQUIREMENTS
@@ -95,7 +95,7 @@ task:
     populate_script: mkdir -p /tmp/bitcoind
   install_script:
     - apt-get update
-    - apt-get -y install libsecp256k1-dev curl jq bc xvfb python3-pyqt5 pyqt5-dev-tools
+    - apt-get -y install libsecp256k1-dev curl jq bc 
     - pip3 install .[tests]
     # install e-x some commits after 1.16.0 tag
     - pip3 install git+https://github.com/spesmilo/electrumx.git@4e66804dc0d668cd6bd4602b547e2f5b2e227e97
@@ -113,8 +113,9 @@ task:
     - env:
         ELECTRUM_MODE: "gui"
       regtest script:
+        - apt-get -y install xvfb python3-pyqt5
         - Xvfb :99 -screen 0 1024x768x24 &
-        - sleep 10s
+        - sleep 5s
         - export DISPLAY=:99
         - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
     - env:
