@@ -109,29 +109,32 @@ fi
 if [[ $1 == "start" ]]; then
     agent="./run_electrum --regtest -D /tmp/$2"
     $agent $ELECTRUM_MODE --proxy none --server localhost:51001:t >/dev/null 2>&1 & sleep 5
-    pid=$!
-    echo $pid > "/tmp/$2.pid"
     $agent load_wallet
+    if [[ "$ELECTRUM_MODE" == "gui" ]]; then
+        pid=$!
+        echo $pid > "/tmp/$2.pid"
+    fi 
     sleep 1 # give time to synchronize
 fi
 
 if [[ $1 == "stop" ]]; then
     agent="./run_electrum --regtest -D /tmp/$2"
     $agent stop || true
-    pid_file="/tmp/$2.pid"
-     if [ -f "$pid_file" ]; then
-        pid=$(cat "$pid_file")
-
-        # Check if the process with the stored PID exists and is running
-        if ps -p $pid > /dev/null; then
-            echo "Stopping PID: $pid"
-            kill $pid
-        else
-            echo "Process with PID $pid not found or already stopped."
+    #If you fail to close the GUI window, the subsequently launched GUIs will not work.
+    if [[ "$ELECTRUM_MODE" == "gui" ]]; then    
+        pid_file="/tmp/$2.pid"
+        if [ -f "$pid_file" ]; then
+            pid=$(cat "$pid_file")
+            # Check if the process with the stored PID exists and is running
+            if ps -p $pid > /dev/null; then
+                echo "Stopping PID: $pid"
+                kill $pid
+            else
+                echo "Process with PID $pid not found or already stopped."
+            fi
+            # Remove the PID file
+            rm -f "$pid_file"
         fi
-
-        # Remove the PID file
-        rm -f "$pid_file"
     fi
 fi
 
