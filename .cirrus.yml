@@ -110,7 +110,7 @@ task:
   electrumx_service_background_script:
     - electrum/tests/regtest/run_electrumx.sh
   matrix:
-    - gui:
+    - regtest script:
         env:
           ELECTRUM_MODE: "gui"
       regtest script:
@@ -119,7 +119,7 @@ task:
         - sleep 5s
         - export DISPLAY=:99
         - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
-    - daemon:
+    - regtest script:
         env:
           ELECTRUM_MODE: "daemon"
   regtest_script:
