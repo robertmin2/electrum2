@@ -80,7 +80,7 @@ task:
   only_if: $CIRRUS_BRANCH == 'master'
 
 task:
-  name: "Regtest functional tests GUI"
+  name: "Regtest functional tests $ELECTRUM_MODE"
   compute_engine_instance:
     image_project: cirrus-images
     image: family/docker-builder
@@ -117,15 +117,13 @@ task:
         - Xvfb :99 -screen 0 1024x768x24 &
         - export DISPLAY=:99
        # - sed -i '0,/^\s*$/ s//ELECTRUM_MODE="gui"\n/' electrum/tests/regtest/regtest.sh    #Add the line to the first whitespace. Passing it as an env. var doesn't seem to work
-        - python3 -m unittest electrum/tests/regtest.py                                # Might be becuase of running it with sudo, but it fails if not
+                              # Might be becuase of running it with sudo, but it fails if not
         
     - env:
         ELECTRUM_MODE: "daemon -d"
-      regtest_script:
-        - sleep 10s
-        - python3 -m unittest electrum/tests/regtest.py
-      env:
-        ELECTRUM_MODE: "daemon -d"
+  regtest_script:
+    - sleep 10s
+    - python3 -m unittest electrum/tests/regtest.py
   env:
     ELECTRUM_REQUIREMENTS: contrib/requirements/requirements.txt
     # ElectrumX exits with an error without this:
