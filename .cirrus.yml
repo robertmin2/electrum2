@@ -113,7 +113,7 @@ task:
     - env:
         ELECTRUM_MODE: "gui"
       gui_setup:
-        - apt-get -y install xvfb python3-pyqt5
+        - apt-get -y install xvfb python3-pyqt5 pyqt5-dev-tools
         - Xvfb :99 -screen 0 1024x768x24 &
         - sleep 10s
         - export DISPLAY=:99
