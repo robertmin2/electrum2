@@ -112,7 +112,7 @@ task:
   matrix:
     - env:
         ELECTRUM_MODE: "gui"
-      regtest script:
+      gui_install_script:
         - sleep 10s
         - Xvfb :99 -screen 0 1024x768x24 &
         - export DISPLAY=:99
