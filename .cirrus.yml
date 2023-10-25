@@ -207,14 +207,14 @@ task:
     path: "dist/*"
   depends_on:
     - "unittests: Tox Python 3.8"
-    
+
 task:
   name: "Regtest functional tests MacOS"
   macos_instance:
     image: macos-monterey-xcode
   pip_cache:
     folder: ~/.cache/pip
-    fingerprint_script: echo Regtest && echo docker_builder && cat $ELECTRUM_REQUIREMENTS
+    fingerprint_script: echo Regtest && echo macOS && cat $ELECTRUM_REQUIREMENTS
   bitcoind_cache:
     folder: /tmp/bitcoind
     populate_script: mkdir -p /tmp/bitcoind
